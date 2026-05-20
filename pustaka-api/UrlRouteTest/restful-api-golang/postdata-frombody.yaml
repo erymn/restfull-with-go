@@ -1,0 +1,6 @@
+name: PostData-FromBody
+method: POST
+url: http://localhost:8880/books
+body:
+  type: json
+  content: "{\r\n  \"price\":40000,\r\n  \"title\":\"Buku sarungan\",\r\n  \"sub_title\": \"Buku kok sarungan\"\r\n}"
