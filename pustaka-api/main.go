@@ -12,13 +12,19 @@ import (
 func main() {
 	router := gin.Default()
 
-	router.GET("/", rootHandler)
-	router.GET("/hello", helloHandler)
-	router.GET("/books/:id", bookHandler)         //path parameter
-	router.GET("/books/:id/:title", book2Handler) //path parameter
-	router.GET("/query", queryHandler)
+	//Untuk mempermudah versioning yang pernah dibuat sebelumnya bisa pakai versioning group
+	v1 := router.Group("/v1")
 
-	router.POST("/books", postBookHandler)
+	v1.GET("/", rootHandler)
+	v1.GET("/hello", helloHandler)
+	v1.GET("/books/:id", bookHandler)         //path parameter
+	v1.GET("/books/:id/:title", book2Handler) //path parameter
+	v1.GET("/query", queryHandler)
+
+	v1.POST("/books", postBookHandler)
+
+	v2 := router.Group("/v2")
+	v2.GET("/books/:id", bookHandlerV2)
 
 	router.Run(":8880")
 }
@@ -41,6 +47,14 @@ func bookHandler(c *gin.Context) {
 	id := c.Param("id")
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"id": id,
+	})
+}
+
+func bookHandlerV2(c *gin.Context) {
+	id := c.Param("id")
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"id":      id,
+		"version": "v2",
 	})
 }
 
