@@ -23,6 +23,122 @@ func main() {
 
 	db.AutoMigrate(&book.Book{})
 
+	//CRUD Sample
+	// -----------Membuat Data------------
+	// bk := book.Book{}
+	// bk.Title = "Manusia Bodoh"
+	// bk.Price = 120000
+	// bk.Rating = 5
+	// bk.Description = "Buku tentang kebodohan manusia"
+
+	// db.Create(&bk)
+	// -----------Membuat Data------------
+
+	// // -----------Mengambil Data------------
+	// var bk book.Book
+
+	// // // Original code tanpa debug
+	// // err = db.First(&bk).Error
+
+	// //untuk debug, bisa gunakan fungsi
+	// err = db.Debug().First(&bk).Error
+
+	// if err != nil {
+	// 	log.Fatal("Gagal mengambil data: ", err)
+	// }
+
+	// fmt.Println("Title: ", bk.Title)
+	// fmt.Printf("Book object %v\n", bk)
+
+	// //Mengambil data terakhir
+	// fmt.Println("---Ambil data terakhir---")
+	// err = db.Debug().Last(&bk).Error
+
+	// if err != nil {
+	// 	log.Fatal("Gagal mengambil data: ", err)
+	// }
+
+	// fmt.Println("Title: ", bk.Title)
+	// fmt.Printf("Book object %v\n", bk)
+
+	// //Mengambil data berdasarkan PK
+	// fmt.Println("---Ambil data berdasarkan PK---")
+	// err = db.Debug().First(&bk, 1).Error
+
+	// if err != nil {
+	// 	log.Fatal("Gagal mengambil data: ", err)
+	// }
+
+	// fmt.Println("Title: ", bk.Title)
+	// fmt.Printf("Book object %v\n", bk)
+
+	// //mengambil banyak object dan masukkan ke slice
+	// fmt.Println("mengambil banyak object dan masukkan ke slice")
+
+	// var books []book.Book
+	// err = db.Debug().Find(&books).Error
+
+	// if err != nil {
+	// 	log.Fatal("Gagal mengambil data: ", err)
+	// }
+
+	// for _, b := range books {
+	// 	fmt.Println("Title: ", b.Title)
+	// 	fmt.Printf("Book object %v", b)
+	// }
+
+	// //Mengambil data menggunakan conditions
+	// fmt.Println("\nMengambil data menggunakan conditions")
+	// var findbooks []book.Book
+	// err = db.Debug().Where("title like ?", "%Manusia%").Find(&findbooks).Error
+
+	// if err != nil {
+	// 	log.Fatal("Gagal mengambil data: ", err)
+	// }
+
+	// for _, b := range findbooks {
+	// 	fmt.Println("Title: ", b.Title)
+	// 	fmt.Printf("Book object %v", b)
+	// }
+
+	// // -----------Mengambil Data------------
+
+	// // -----------------Update Data-------------
+	// var bkUpd book.Book
+	// err = db.Debug().Where("id = ?", 2).First(&bkUpd).Error
+	// if err != nil {
+	// 	log.Fatal("Gagal mengambil data: ", err)
+	// }
+
+	// bkUpd.Title = "Manusia Kera (Edisi Revisi)"
+	// err = db.Save(&bkUpd).Error
+
+	// if err != nil {
+	// 	log.Fatal("Gagal update data: ", err)
+	// }
+
+	// fmt.Println("Title: ", bkUpd.Title)
+	// fmt.Printf("Book object %v\n", bkUpd)
+
+	// // -----------------Update Data-------------
+
+	// -----------------Delete Data-------------
+	var bkDel book.Book
+	err = db.Debug().Where("id = ?", 2).First(&bkDel).Error
+	if err != nil {
+		log.Fatal("Gagal mengambil data: ", err)
+	}
+
+	err = db.Delete(&bkDel).Error
+
+	//err = db.Save(&bkDel).Error
+
+	if err != nil {
+		log.Fatal("Gagal update data: ", err)
+	}
+
+	// -----------------Delete Data-------------
+
 	//Untuk mempermudah versioning yang pernah dibuat sebelumnya bisa pakai versioning group
 	v1 := router.Group("/v1")
 
@@ -36,6 +152,7 @@ func main() {
 
 	v2 := router.Group("/v2")
 	v2.GET("/books/:id", handler.BookHandlerV2)
+	//v2.GET("/findbook", handler.QueryFindBookHandler)
 
 	router.Run(":8880")
 }
