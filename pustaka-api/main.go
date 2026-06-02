@@ -34,11 +34,24 @@ func main() {
 		fmt.Printf("Book object %v", b)
 	}
 
-	book, err := bookRepository.FindByID(1)
+	bookItem, err := bookRepository.FindByID(1)
 	if err != nil {
 		log.Fatal("Gagal mengambil data: ", err)
 	}
-	fmt.Printf("Book object %v", book)
+	fmt.Printf("Book object %v", bookItem)
+
+	bkNew := book.Book{}
+	bkNew.Title = "Belajar Go 4 (Advanced Series)"
+	bkNew.Price = 160000
+	bkNew.Rating = 5
+	bkNew.Description = "Buku tentang belajar Go untuk advanced programmer"
+
+	bookItem, err = bookRepository.Save(bkNew)
+
+	if err != nil {
+		log.Fatal("Gagal menyimpan data: ", err)
+	}
+	fmt.Printf("Book object %v", bookItem)
 
 	//CRUD Sample
 	// -----------Membuat Data------------
