@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -22,6 +23,22 @@ func main() {
 	}
 
 	db.AutoMigrate(&book.Book{})
+
+	bookRepository := book.NewRepository(db)
+
+	books, err := bookRepository.FindAll()
+	if err != nil {
+		log.Fatal("Gagal mengambil data: ", err)
+	}
+	for _, b := range books {
+		fmt.Printf("Book object %v", b)
+	}
+
+	book, err := bookRepository.FindByID(1)
+	if err != nil {
+		log.Fatal("Gagal mengambil data: ", err)
+	}
+	fmt.Printf("Book object %v", book)
 
 	//CRUD Sample
 	// -----------Membuat Data------------
@@ -122,22 +139,22 @@ func main() {
 
 	// // -----------------Update Data-------------
 
-	// -----------------Delete Data-------------
-	var bkDel book.Book
-	err = db.Debug().Where("id = ?", 2).First(&bkDel).Error
-	if err != nil {
-		log.Fatal("Gagal mengambil data: ", err)
-	}
+	// // -----------------Delete Data-------------
+	// var bkDel book.Book
+	// err = db.Debug().Where("id = ?", 2).First(&bkDel).Error
+	// if err != nil {
+	// 	log.Fatal("Gagal mengambil data: ", err)
+	// }
 
-	err = db.Delete(&bkDel).Error
+	// err = db.Delete(&bkDel).Error
 
-	//err = db.Save(&bkDel).Error
+	// //err = db.Save(&bkDel).Error
 
-	if err != nil {
-		log.Fatal("Gagal update data: ", err)
-	}
+	// if err != nil {
+	// 	log.Fatal("Gagal update data: ", err)
+	// }
 
-	// -----------------Delete Data-------------
+	// // -----------------Delete Data-------------
 
 	//Untuk mempermudah versioning yang pernah dibuat sebelumnya bisa pakai versioning group
 	v1 := router.Group("/v1")
