@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -26,34 +25,47 @@ func main() {
 
 	bookRepository := book.NewRepository(db)
 
-	books, err := bookRepository.FindAll()
-	if err != nil {
-		log.Fatal("Gagal mengambil data: ", err)
+	// Mekanisme lewat Service baru kemudian lewat repository
+	bookService := book.NewService(bookRepository)
+
+	// Instantiate book yang akan diinput
+	bookRequest := book.BookRequest{
+		Title: "Cara merawat Badan",
+		Price: "90000",
 	}
-	for _, b := range books {
-		fmt.Printf("Book object %v", b)
-	}
 
-	bookItem, err := bookRepository.FindByID(1)
-	if err != nil {
-		log.Fatal("Gagal mengambil data: ", err)
-	}
-	fmt.Printf("Book object %v", bookItem)
+	// Save data ke database tapi lewat service
+	bookService.Save(bookRequest)
 
-	bkNew := book.Book{}
-	bkNew.Title = "Belajar Go 4 (Advanced Series)"
-	bkNew.Price = 160000
-	bkNew.Rating = 5
-	bkNew.Description = "Buku tentang belajar Go untuk advanced programmer"
+	//// Mekanisme jika lewat Repository langsung
+	// books, err := bookRepository.FindAll()
+	// if err != nil {
+	// 	log.Fatal("Gagal mengambil data: ", err)
+	// }
+	// for _, b := range books {
+	// 	fmt.Printf("Book object %v", b)
+	// }
 
-	bookItem, err = bookRepository.Save(bkNew)
+	// bookItem, err := bookRepository.FindByID(1)
+	// if err != nil {
+	// 	log.Fatal("Gagal mengambil data: ", err)
+	// }
+	// fmt.Printf("Book object %v", bookItem)
 
-	if err != nil {
-		log.Fatal("Gagal menyimpan data: ", err)
-	}
-	fmt.Printf("Book object %v", bookItem)
+	// bkNew := book.Book{}
+	// bkNew.Title = "Belajar Go 4 (Advanced Series)"
+	// bkNew.Price = 160000
+	// bkNew.Rating = 5
+	// bkNew.Description = "Buku tentang belajar Go untuk advanced programmer"
 
-	//CRUD Sample
+	// bookItem, err = bookRepository.Save(bkNew)
+
+	// if err != nil {
+	// 	log.Fatal("Gagal menyimpan data: ", err)
+	// }
+	// fmt.Printf("Book object %v", bookItem)
+
+	////CRUD Sample
 	// -----------Membuat Data------------
 	// bk := book.Book{}
 	// bk.Title = "Manusia Bodoh"
@@ -186,3 +198,10 @@ func main() {
 
 	router.Run(":8880")
 }
+
+//Layer Aplikasi
+// 1. main
+// 2. Services
+// 3. Repository
+// 4. DB (GORM)
+// 5. MySQL

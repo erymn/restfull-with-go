@@ -60,7 +60,7 @@ func QueryHandler(c *gin.Context) {
 
 func PostBookHandler(c *gin.Context) {
 	//menerima 2 data, title dan price
-	var newBook book.BookInput
+	var newBook book.BookRequest
 
 	err := c.ShouldBindJSON(&newBook)
 	if err != nil {
