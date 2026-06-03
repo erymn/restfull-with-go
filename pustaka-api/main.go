@@ -51,7 +51,8 @@ func main() {
 
 //Layer Aplikasi
 // 1. main
-// 2. Services
-// 3. Repository
-// 4. DB (GORM)
-// 5. MySQL
+// 2. handler
+// 3. Services
+// 4. Repository
+// 5. DB (GORM)
+// 6. MySQL
