@@ -34,16 +34,17 @@ func main() {
 	//Untuk mempermudah versioning yang pernah dibuat sebelumnya bisa pakai versioning group
 	v1 := router.Group("/v1")
 
-	v1.GET("/", bookHandler.RootHandler)
-	v1.GET("/hello", bookHandler.HelloHandler)
-	v1.GET("/books/:id", bookHandler.BookHandler)         //path parameter
-	v1.GET("/books/:id/:title", bookHandler.Book2Handler) //path parameter
-	v1.GET("/query", bookHandler.QueryHandler)
+	// v1.GET("/", bookHandler.RootHandler)
+	// v1.GET("/hello", bookHandler.HelloHandler)
+	// v1.GET("/books/:id", bookHandler.BookHandler)         //path parameter
+	// v1.GET("/books/:id/:title", bookHandler.Book2Handler) //path parameter
+	// v1.GET("/query", bookHandler.QueryHandler)
 
 	v1.POST("/books", bookHandler.PostBookHandler)
+	v1.GET("/books", bookHandler.GetBooksHandler)
 
-	v2 := router.Group("/v2")
-	v2.GET("/books/:id", bookHandler.BookHandlerV2)
+	//v2 := router.Group("/v2")
+	//v2.GET("/books/:id", bookHandler.BookHandlerV2)
 	//v2.GET("/findbook", handler.QueryFindBookHandler)
 
 	router.Run(":8880")
