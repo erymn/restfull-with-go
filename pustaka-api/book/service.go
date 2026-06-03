@@ -30,8 +30,10 @@ func (s *service) Save(bookRequest BookRequest) (Book, error) {
 
 	// ubah bookrequest ke book
 	newBook := Book{
-		Title: bookRequest.Title,
-		Price: int(price),
+		Title:       bookRequest.Title,
+		Price:       int(price),
+		Description: bookRequest.Description,
+		Rating:      bookRequest.Rating,
 	}
 
 	bookInput, err := s.repository.Save(newBook)

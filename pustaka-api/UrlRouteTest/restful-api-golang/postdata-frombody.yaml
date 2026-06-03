@@ -3,4 +3,4 @@ method: POST
 url: http://localhost:8880/v1/books
 body:
   type: json
-  content: "{\r\n  \"price\":\"40\",\r\n  \"title\":\"Manusia Bejat\"\r\n}"
+  content: "{\r\n  \"price\":150000,\r\n  \"title\":\"Belajar Go Pemula v2\",\r\n  \"description\" : \"Belajar Go untuk Pemula versi 2\",\r\n  \"rating\":5\r\n}"

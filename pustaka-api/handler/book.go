@@ -10,28 +10,42 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func RootHandler(c *gin.Context) {
+// // Untuk memindahkan service dari main.go yang perlu dilakukan:
+// 1. Buat struct untuk book handler
+type bookHandler struct {
+	bookService book.Service
+}
+
+//  2. Buat function NewBookHandler yang akan memiliki parameter book.Service
+//     dengan return value sebagai bookHandler struct
+func NewBookHandler(bookService book.Service) *bookHandler {
+	return &bookHandler{bookService}
+}
+
+// function RootHandler, supaya bisa dimiliki oleh bookHandler, maka function dibuat method
+// dengan menambahkan nama handler didepan function name nya
+func (h *bookHandler) RootHandler(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"name": "Ery Maftiyarto",
 		"desc": "Software Developer",
 	})
 }
 
-func HelloHandler(c *gin.Context) {
+func (h *bookHandler) HelloHandler(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"say":      "Hello world",
 		"subtitle": "hahahahaha",
 	})
 }
 
-func BookHandler(c *gin.Context) {
+func (h *bookHandler) BookHandler(c *gin.Context) {
 	id := c.Param("id")
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"id": id,
 	})
 }
 
-func BookHandlerV2(c *gin.Context) {
+func (h *bookHandler) BookHandlerV2(c *gin.Context) {
 	id := c.Param("id")
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"id":      id,
@@ -39,7 +53,7 @@ func BookHandlerV2(c *gin.Context) {
 	})
 }
 
-func Book2Handler(c *gin.Context) {
+func (h *bookHandler) Book2Handler(c *gin.Context) {
 	id := c.Param("id")
 	title := c.Param("title")
 	c.IndentedJSON(http.StatusOK, gin.H{
@@ -48,7 +62,7 @@ func Book2Handler(c *gin.Context) {
 	})
 }
 
-func QueryHandler(c *gin.Context) {
+func (h *bookHandler) QueryHandler(c *gin.Context) {
 	title := c.Query("title")
 	price := c.Query("price")
 
@@ -58,7 +72,7 @@ func QueryHandler(c *gin.Context) {
 	})
 }
 
-func PostBookHandler(c *gin.Context) {
+func (h *bookHandler) PostBookHandler(c *gin.Context) {
 	//menerima 2 data, title dan price
 	var newBook book.BookRequest
 
@@ -78,9 +92,17 @@ func PostBookHandler(c *gin.Context) {
 		return
 	}
 
+	bookInp, err := h.bookService.Save(newBook)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+		return
+	}
+
 	c.IndentedJSON(http.StatusOK, gin.H{
-		"title": newBook.Title,
-		"price": newBook.Price,
+		"data": bookInp,
 	})
 
 }
