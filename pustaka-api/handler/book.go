@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"pustaka-api/book"
 
@@ -94,6 +95,32 @@ func (h *bookHandler) GetBooksHandler(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"data": bookList,
+	})
+}
+
+func (h *bookHandler) GetBookByIdHandler(c *gin.Context) {
+	idString := c.Param("id")
+	id, _ := strconv.Atoi(idString)
+
+	foundBook, err := h.bookService.FindByID(id)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	bookResp := book.BookResponse{
+		ID:          foundBook.ID,
+		Title:       foundBook.Title,
+		Description: foundBook.Description,
+		Price:       foundBook.Price,
+		Rating:      foundBook.Rating,
+	}
+
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"data": bookResp,
 	})
 }
 

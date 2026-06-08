@@ -42,6 +42,7 @@ func main() {
 
 	v1.POST("/books", bookHandler.PostBookHandler)
 	v1.GET("/books", bookHandler.GetBooksHandler)
+	v1.GET("/books/:id", bookHandler.GetBookByIdHandler)
 
 	//v2 := router.Group("/v2")
 	//v2.GET("/books/:id", bookHandler.BookHandlerV2)
