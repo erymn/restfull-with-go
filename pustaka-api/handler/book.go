@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"pustaka-api/book"
 
@@ -22,53 +23,104 @@ func NewBookHandler(bookService book.Service) *bookHandler {
 	return &bookHandler{bookService}
 }
 
-// function RootHandler, supaya bisa dimiliki oleh bookHandler, maka function dibuat method
-// dengan menambahkan nama handler didepan function name nya
-func (h *bookHandler) RootHandler(c *gin.Context) {
+// // function RootHandler, supaya bisa dimiliki oleh bookHandler, maka function dibuat method
+// // dengan menambahkan nama handler didepan function name nya
+// func (h *bookHandler) RootHandler(c *gin.Context) {
+// 	c.IndentedJSON(http.StatusOK, gin.H{
+// 		"name": "Ery Maftiyarto",
+// 		"desc": "Software Developer",
+// 	})
+// }
+
+// func (h *bookHandler) HelloHandler(c *gin.Context) {
+// 	c.IndentedJSON(http.StatusOK, gin.H{
+// 		"say":      "Hello world",
+// 		"subtitle": "hahahahaha",
+// 	})
+// }
+
+// func (h *bookHandler) BookHandler(c *gin.Context) {
+// 	id := c.Param("id")
+// 	c.IndentedJSON(http.StatusOK, gin.H{
+// 		"id": id,
+// 	})
+// }
+
+// func (h *bookHandler) BookHandlerV2(c *gin.Context) {
+// 	id := c.Param("id")
+// 	c.IndentedJSON(http.StatusOK, gin.H{
+// 		"id":      id,
+// 		"version": "v2",
+// 	})
+// }
+
+// func (h *bookHandler) Book2Handler(c *gin.Context) {
+// 	id := c.Param("id")
+// 	title := c.Param("title")
+// 	c.IndentedJSON(http.StatusOK, gin.H{
+// 		"id":    id,
+// 		"title": title,
+// 	})
+// }
+
+// func (h *bookHandler) QueryHandler(c *gin.Context) {
+// 	title := c.Query("title")
+// 	price := c.Query("price")
+
+// 	c.IndentedJSON(http.StatusOK, gin.H{
+// 		"title": title,
+// 		"price": price,
+// 	})
+// }
+
+func (h *bookHandler) GetBooksHandler(c *gin.Context) {
+	books, err := h.bookService.FindAll()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	bookList := []book.BookResponse{}
+	for _, b := range books {
+		bookList = append(bookList, book.BookResponse{
+			ID:          b.ID,
+			Title:       b.Title,
+			Description: b.Description,
+			Price:       b.Price,
+			Rating:      b.Rating,
+		})
+	}
+
 	c.IndentedJSON(http.StatusOK, gin.H{
-		"name": "Ery Maftiyarto",
-		"desc": "Software Developer",
+		"data": bookList,
 	})
 }
 
-func (h *bookHandler) HelloHandler(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, gin.H{
-		"say":      "Hello world",
-		"subtitle": "hahahahaha",
-	})
-}
+func (h *bookHandler) GetBookByIdHandler(c *gin.Context) {
+	idString := c.Param("id")
+	id, _ := strconv.Atoi(idString)
 
-func (h *bookHandler) BookHandler(c *gin.Context) {
-	id := c.Param("id")
-	c.IndentedJSON(http.StatusOK, gin.H{
-		"id": id,
-	})
-}
+	foundBook, err := h.bookService.FindByID(id)
 
-func (h *bookHandler) BookHandlerV2(c *gin.Context) {
-	id := c.Param("id")
-	c.IndentedJSON(http.StatusOK, gin.H{
-		"id":      id,
-		"version": "v2",
-	})
-}
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+		return
+	}
 
-func (h *bookHandler) Book2Handler(c *gin.Context) {
-	id := c.Param("id")
-	title := c.Param("title")
-	c.IndentedJSON(http.StatusOK, gin.H{
-		"id":    id,
-		"title": title,
-	})
-}
-
-func (h *bookHandler) QueryHandler(c *gin.Context) {
-	title := c.Query("title")
-	price := c.Query("price")
+	bookResp := book.BookResponse{
+		ID:          foundBook.ID,
+		Title:       foundBook.Title,
+		Description: foundBook.Description,
+		Price:       foundBook.Price,
+		Rating:      foundBook.Rating,
+	}
 
 	c.IndentedJSON(http.StatusOK, gin.H{
-		"title": title,
-		"price": price,
+		"data": bookResp,
 	})
 }
 
