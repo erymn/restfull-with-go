@@ -112,7 +112,7 @@ func (h *bookHandler) GetBookByIdHandler(c *gin.Context) {
 	})
 }
 
-func (h *bookHandler) PostBookHandler(c *gin.Context) {
+func (h *bookHandler) CreateBookHandler(c *gin.Context) {
 	//menerima 2 data, title dan price
 	var newBook book.BookRequest
 
