@@ -84,13 +84,7 @@ func (h *bookHandler) GetBooksHandler(c *gin.Context) {
 
 	bookList := []book.BookResponse{}
 	for _, b := range books {
-		bookList = append(bookList, book.BookResponse{
-			ID:          b.ID,
-			Title:       b.Title,
-			Description: b.Description,
-			Price:       b.Price,
-			Rating:      b.Rating,
-		})
+		bookList = append(bookList, convertToBookResponse(b))
 	}
 
 	c.IndentedJSON(http.StatusOK, gin.H{
@@ -111,20 +105,14 @@ func (h *bookHandler) GetBookByIdHandler(c *gin.Context) {
 		return
 	}
 
-	bookResp := book.BookResponse{
-		ID:          foundBook.ID,
-		Title:       foundBook.Title,
-		Description: foundBook.Description,
-		Price:       foundBook.Price,
-		Rating:      foundBook.Rating,
-	}
+	bookResp := convertToBookResponse(foundBook)
 
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"data": bookResp,
 	})
 }
 
-func (h *bookHandler) PostBookHandler(c *gin.Context) {
+func (h *bookHandler) CreateBookHandler(c *gin.Context) {
 	//menerima 2 data, title dan price
 	var newBook book.BookRequest
 
@@ -157,4 +145,71 @@ func (h *bookHandler) PostBookHandler(c *gin.Context) {
 		"data": bookInp,
 	})
 
+}
+
+func (h *bookHandler) UpdateBookHandler(c *gin.Context) {
+	idString := c.Param("id")
+	id, _ := strconv.Atoi(idString)
+
+	//menerima 2 data, title dan price
+	var updatedBook book.BookRequest
+
+	err := c.ShouldBindJSON(&updatedBook)
+	if err != nil {
+		errorMsgs := []string{}
+
+		for _, err := range err.(validator.ValidationErrors) {
+			//Capture all error yang dilooping
+			errorMsg := fmt.Sprintf("Error on field: %s, condition: %s", err.Field(), err.Tag())
+			errorMsgs = append(errorMsgs, errorMsg)
+		}
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": errorMsgs,
+		})
+		return
+	}
+
+	bookUpd, err := h.bookService.Update(id, updatedBook)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"data": convertToBookResponse(bookUpd),
+	})
+
+}
+
+func (h *bookHandler) DeleteBookHandler(c *gin.Context) {
+	idString := c.Param("id")
+	id, _ := strconv.Atoi(idString)
+
+	bookDel, err := h.bookService.Delete(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	bookResp := convertToBookResponse(bookDel)
+
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"data": bookResp,
+	})
+}
+
+func convertToBookResponse(b book.Book) book.BookResponse {
+	return book.BookResponse{
+		ID:          b.ID,
+		Title:       b.Title,
+		Description: b.Description,
+		Price:       b.Price,
+		Rating:      b.Rating,
+	}
 }

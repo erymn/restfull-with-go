@@ -9,7 +9,7 @@ type Repository interface {
 	FindByID(id int) (Book, error)
 	Save(book Book) (Book, error)
 	Update(book Book) (Book, error)
-	Delete(book Book) error
+	Delete(book Book) (Book, error)
 }
 
 // 2. Membuat struct agar interface bisa digunakan dalam bentuk struct (representasi dari class)
@@ -63,11 +63,11 @@ func (r *repository) Update(book Book) (Book, error) {
 	return book, nil
 }
 
-func (r *repository) Delete(book Book) error {
+func (r *repository) Delete(book Book) (Book, error) {
 	err := r.db.Delete(&book).Error
 	if err != nil {
-		return err
+		return Book{}, err
 	}
 
-	return nil
+	return book, nil
 }

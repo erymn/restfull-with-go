@@ -4,8 +4,8 @@ type Service interface {
 	FindAll() ([]Book, error)
 	FindByID(id int) (Book, error)
 	Save(bookRequest BookRequest) (Book, error)
-	Update(book Book) (Book, error)
-	Delete(book Book) error
+	Update(id int, bookRequest BookRequest) (Book, error)
+	Delete(id int) (Book, error)
 }
 
 type service struct {
@@ -41,10 +41,30 @@ func (s *service) Save(bookRequest BookRequest) (Book, error) {
 	//return s.repository.Save(newBook)
 }
 
-func (s *service) Update(book Book) (Book, error) {
-	return s.repository.Update(book)
+func (s *service) Update(id int, bookRequest BookRequest) (Book, error) {
+	book, err := s.repository.FindByID(id)
+	if err != nil {
+		return book, err
+	}
+
+	price, _ := bookRequest.Price.Int64()
+
+	// ubah bookrequest ke book
+	book.Title = bookRequest.Title
+	book.Price = int(price)
+	book.Description = bookRequest.Description
+	book.Rating = bookRequest.Rating
+
+	bookInput, err := s.repository.Update(book)
+	return bookInput, err
+	//return s.repository.Save(newBook)
 }
 
-func (s *service) Delete(book Book) error {
-	return s.repository.Delete(book)
+func (s *service) Delete(id int) (Book, error) {
+	book, err := s.repository.FindByID(id)
+	if err != nil {
+		return book, err
+	}
+	newBook, err := s.repository.Delete(book)
+	return newBook, err
 }

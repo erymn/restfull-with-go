@@ -1,0 +1,6 @@
+name: Update-Book
+method: PUT
+url: http://localhost:8880/v1/books/14
+body:
+  type: json
+  content: "{\r\n  \"price\":160000,\r\n  \"title\":\"Belajar Go Pemula v2\",\r\n  \"description\" : \"Belajar Go untuk Pemula versi 2\",\r\n  \"rating\":5\r\n}"
